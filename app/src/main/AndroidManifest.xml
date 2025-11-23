@@ -23,6 +23,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="false"
+            android:label="AI设置"
+            android:theme="@style/Theme.RedditTrending" />
+
+        <activity
+            android:name=".ui.AIResultActivity"
+            android:exported="false"
+            android:label="AI分析报告"
+            android:theme="@style/Theme.RedditTrending" />
     </application>
 
 </manifest>

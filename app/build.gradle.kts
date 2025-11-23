@@ -70,6 +70,12 @@ dependencies {
     // Chip for tags
     implementation("com.google.android.flexbox:flexbox:3.0.0")
 
+    // Encrypted SharedPreferences for secure API key storage
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+
+    // Markdown rendering
+    implementation("io.noties.markwon:core:4.6.2")
+
     // Testing
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")

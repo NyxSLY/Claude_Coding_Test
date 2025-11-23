@@ -1,6 +1,9 @@
 package com.example.reddittrending.data
 
+import com.example.reddittrending.ai.Comment
+import com.example.reddittrending.ai.PostWithComments
 import com.example.reddittrending.api.RetrofitClient
+import com.example.reddittrending.model.RedditChild
 import com.example.reddittrending.model.RedditPost
 import com.example.reddittrending.model.SortType
 import com.example.reddittrending.model.TimeFilter
@@ -125,5 +128,74 @@ class RedditRepository {
             TimeFilter.YEAR -> postAge <= 31536000
             TimeFilter.ALL -> true
         }
+    }
+
+    /**
+     * 获取帖子详情和评论
+     */
+    suspend fun getPostWithComments(post: RedditPost): PostWithComments? = withContext(Dispatchers.IO) {
+        try {
+            val responses = api.getPostComments(
+                subreddit = post.subreddit,
+                postId = post.id,
+                limit = 30,
+                depth = 2
+            )
+
+            if (responses.size < 2) return@withContext null
+
+            val commentsData = responses[1].data.children
+            val comments = parseComments(commentsData)
+
+            PostWithComments(
+                id = post.id,
+                title = post.title,
+                selfText = post.selfText,
+                author = post.author,
+                subreddit = post.subreddit,
+                url = post.getFullUrl(),
+                score = post.score,
+                numComments = post.numComments,
+                comments = comments
+            )
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    /**
+     * 批量获取多个帖子的评论
+     */
+    suspend fun getPostsWithComments(posts: List<RedditPost>, maxPosts: Int = 10): List<PostWithComments> =
+        withContext(Dispatchers.IO) {
+            posts.take(maxPosts).mapNotNull { post ->
+                async {
+                    try {
+                        getPostWithComments(post)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+            }.awaitAll().filterNotNull()
+        }
+
+    /**
+     * 解析评论数据
+     */
+    private fun parseComments(children: List<RedditChild>): List<Comment> {
+        return children.mapNotNull { child ->
+            if (child.kind != "t1") return@mapNotNull null
+
+            val data = child.data
+            val commentBody = data.body ?: data.selfText ?: return@mapNotNull null
+            if (commentBody.isBlank()) return@mapNotNull null
+
+            Comment(
+                author = data.author,
+                body = commentBody,
+                score = data.score,
+                replies = emptyList()
+            )
+        }.sortedByDescending { it.score }
     }
 }

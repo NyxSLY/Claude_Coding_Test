@@ -72,4 +72,17 @@ interface RedditApi {
         @Query("limit") limit: Int = 50,
         @Query("after") after: String? = null
     ): RedditResponse
+
+    /**
+     * 获取帖子详情和评论
+     * 返回数组：[0]是帖子信息，[1]是评论
+     */
+    @GET("r/{subreddit}/comments/{postId}.json")
+    suspend fun getPostComments(
+        @Path("subreddit") subreddit: String,
+        @Path("postId") postId: String,
+        @Query("limit") limit: Int = 50,
+        @Query("depth") depth: Int = 3,
+        @Query("sort") sort: String = "top"
+    ): List<RedditResponse>
 }

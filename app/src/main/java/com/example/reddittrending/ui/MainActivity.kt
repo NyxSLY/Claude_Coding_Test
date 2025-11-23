@@ -3,6 +3,8 @@ package com.example.reddittrending.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
@@ -30,8 +32,28 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
+        setupToolbar()
         setupUI()
         setupObservers()
+    }
+
+    private fun setupToolbar() {
+        setSupportActionBar(binding.toolbar)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun setupUI() {
@@ -86,6 +108,18 @@ class MainActivity : AppCompatActivity() {
             viewModel.loadTrendingPosts()
         }
 
+        // AI分析按钮
+        binding.btnAiAnalyze.setOnClickListener {
+            viewModel.performAIAnalysis()
+        }
+
+        // 查看AI报告按钮
+        binding.btnViewAiReport.setOnClickListener {
+            viewModel.aiAnalysis.value?.let { analysis ->
+                AIResultActivity.start(this, analysis.summary)
+            }
+        }
+
         // 添加一些默认的热门subreddits作为建议
         setupSuggestionChips()
     }
@@ -123,6 +157,13 @@ class MainActivity : AppCompatActivity() {
             postAdapter.submitList(posts)
             binding.tvResultCount.text = "找到 ${posts.size} 个热门帖子"
             binding.tvResultCount.visibility = View.VISIBLE
+
+            // 显示AI分析按钮（如果未启用自动分析）
+            if (posts.isNotEmpty() && !viewModel.isAIEnabled()) {
+                binding.layoutAiButtons.visibility = View.VISIBLE
+                binding.btnAiAnalyze.visibility = View.VISIBLE
+                binding.btnViewAiReport.visibility = View.GONE
+            }
         }
 
         // 观察加载状态
@@ -130,6 +171,34 @@ class MainActivity : AppCompatActivity() {
             binding.swipeRefresh.isRefreshing = isLoading
             binding.btnSearch.isEnabled = !isLoading
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
+
+        // 观察AI分析状态
+        viewModel.isAnalyzing.observe(this) { isAnalyzing ->
+            binding.layoutAiProgress.visibility = if (isAnalyzing) View.VISIBLE else View.GONE
+            binding.btnAiAnalyze.isEnabled = !isAnalyzing
+        }
+
+        // 观察AI分析结果
+        viewModel.aiAnalysis.observe(this) { analysis ->
+            if (analysis != null) {
+                binding.layoutAiButtons.visibility = View.VISIBLE
+                binding.btnViewAiReport.visibility = View.VISIBLE
+                binding.btnAiAnalyze.visibility = View.GONE
+
+                // 显示AI分析卡片摘要
+                binding.cardAiSummary.visibility = View.VISIBLE
+                val summaryPreview = analysis.summary.take(300).let {
+                    if (analysis.summary.length > 300) "$it..." else it
+                }
+                binding.tvAiSummaryPreview.text = summaryPreview
+
+                binding.cardAiSummary.setOnClickListener {
+                    AIResultActivity.start(this, analysis.summary)
+                }
+            } else {
+                binding.cardAiSummary.visibility = View.GONE
+            }
         }
 
         // 观察错误信息

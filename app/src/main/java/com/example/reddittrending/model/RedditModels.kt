@@ -22,24 +22,25 @@ data class RedditChild(
 )
 
 data class RedditPost(
-    @SerializedName("id") val id: String,
-    @SerializedName("title") val title: String,
-    @SerializedName("selftext") val selfText: String?,
-    @SerializedName("author") val author: String,
-    @SerializedName("subreddit") val subreddit: String,
-    @SerializedName("subreddit_name_prefixed") val subredditPrefixed: String,
-    @SerializedName("score") val score: Int,
-    @SerializedName("upvote_ratio") val upvoteRatio: Float,
-    @SerializedName("num_comments") val numComments: Int,
-    @SerializedName("created_utc") val createdUtc: Long,
-    @SerializedName("url") val url: String,
-    @SerializedName("permalink") val permalink: String,
-    @SerializedName("thumbnail") val thumbnail: String?,
-    @SerializedName("preview") val preview: Preview?,
-    @SerializedName("is_self") val isSelf: Boolean,
-    @SerializedName("over_18") val isNsfw: Boolean,
-    @SerializedName("stickied") val isStickied: Boolean,
-    @SerializedName("link_flair_text") val flairText: String?
+    @SerializedName("id") val id: String = "",
+    @SerializedName("title") val title: String = "",
+    @SerializedName("selftext") val selfText: String? = null,
+    @SerializedName("body") val body: String? = null, // 评论内容字段
+    @SerializedName("author") val author: String = "[deleted]",
+    @SerializedName("subreddit") val subreddit: String = "",
+    @SerializedName("subreddit_name_prefixed") val subredditPrefixed: String = "",
+    @SerializedName("score") val score: Int = 0,
+    @SerializedName("upvote_ratio") val upvoteRatio: Float = 0f,
+    @SerializedName("num_comments") val numComments: Int = 0,
+    @SerializedName("created_utc") val createdUtc: Long = 0,
+    @SerializedName("url") val url: String = "",
+    @SerializedName("permalink") val permalink: String = "",
+    @SerializedName("thumbnail") val thumbnail: String? = null,
+    @SerializedName("preview") val preview: Preview? = null,
+    @SerializedName("is_self") val isSelf: Boolean = false,
+    @SerializedName("over_18") val isNsfw: Boolean = false,
+    @SerializedName("stickied") val isStickied: Boolean = false,
+    @SerializedName("link_flair_text") val flairText: String? = null
 ) {
     fun getFullUrl(): String = "https://www.reddit.com$permalink"
 

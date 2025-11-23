@@ -20,3 +20,4 @@
 -dontwarn sun.misc.**
 -keep class com.google.gson.stream.** { *; }
 -keep class com.example.reddittrending.model.** { *; }
+-keep class com.example.reddittrending.ai.** { *; }
