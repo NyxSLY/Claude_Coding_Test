@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Reddit-style icon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,30
+        C40,30 29,41 29,55
+        C29,69 40,80 54,80
+        C68,80 79,69 79,55
+        C79,41 68,30 54,30z
+        M44,52 C44,49 46,47 49,47 C52,47 54,49 54,52 C54,55 52,57 49,57 C46,57 44,55 44,52z
+        M64,52 C64,49 62,47 59,47 C56,47 54,49 54,52 C54,55 56,57 59,57 C62,57 64,55 64,52z
+        M54,70 C47,70 41,66 41,61 L67,61 C67,66 61,70 54,70z" />
+</vector>
