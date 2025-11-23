@@ -69,4 +69,8 @@ dependencies {
 
     // Chip for tags
     implementation("com.google.android.flexbox:flexbox:3.0.0")
+
+    // Testing
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 }
